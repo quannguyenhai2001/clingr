@@ -1,0 +1,18 @@
+.dot {
+  background-color: orange;
+  bottom: 0;
+  transform: translate(-50%, -50%);
+}
+
+.title {
+  color: rgb(5, 74, 238);
+  font-size: 8vw;
+  padding-left: 8vw;
+}
+.title > span {
+  display: block;
+  overflow: hidden;
+}
+.title > span {
+  display: block;
+}

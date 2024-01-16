@@ -1,8 +1,9 @@
 
 import { Box, Container, Typography } from "@mui/material";
 import introBackground from "./assets/intro-background-xl.webp";
-import { useEffect, useState } from "react";
-import { useSpring, animated } from "@react-spring/web";
+import React, { useEffect, useState } from "react";
+import { useSpring, animated, useScroll } from "@react-spring/web";
+import './App.css';
 function App() {
   const [offset, setOffset] = useState(0);
   const [text, setText] = useState([
@@ -10,13 +11,31 @@ function App() {
     { text: 'It is easy and' },
     { text: 'wonderful.' },
   ]);
-
+  const containerRef = React.useRef(null)
   useEffect(() => {
     window.addEventListener('scroll', () => {
       const currentOffset = window.scrollY;
       setOffset(currentOffset);
     });
   }, []);
+  const [textStyles, textApi] = useSpring(() => ({
+    y: '100%',
+  }))
+
+  const { scrollYProgress } = useScroll({
+    container: containerRef,
+    onChange: ({ value: { scrollYProgress } }) => {
+      if (scrollYProgress > 0.7) {
+        textApi.start({ y: '0' })
+      } else {
+        textApi.start({ y: '100%' })
+      }
+    },
+    default: {
+      immediate: true,
+    },
+  })
+
   return (
     <Box>
       <Box
@@ -55,11 +74,29 @@ function App() {
         </Box>
       </Box >
       <Box sx={{
-        height: '100vh',
-        backgroundColor: 'red'
+        width: "100%",
+        height: "100%",
+        position: "fixed",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 0,
       }}>
-
+        <animated.div
+          className="dot"
+          style={{
+            clipPath: scrollYProgress.to(val => `circle(${val * 100}%)`),
+          }}>
+          <h1 className="title">
+            <span>
+              <animated.span style={textStyles}>Aha!</animated.span>
+            </span>
+            <span>
+              <animated.span style={textStyles}>You found me!</animated.span>
+            </span>
+          </h1>
+        </animated.div>
       </Box>
+      <Box sx={{ height: '100vh' }}></Box>
     </Box>
 
   )
